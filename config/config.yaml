@@ -1,0 +1,120 @@
+# Medical Image Classification Configuration
+
+# Data Configuration
+data:
+  raw_data_path: "data/raw"
+  processed_data_path: "data/processed"
+  splits_path: "data/splits"
+  image_size: [224, 224]
+  batch_size: 32
+  num_workers: 4
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+
+# Preprocessing Configuration
+preprocessing:
+  normalize: true
+  clahe: true
+  clahe_clip_limit: 2.0
+  resize_method: "bilinear"
+  lung_segmentation: false
+  histogram_equalization: true
+
+# Data Augmentation
+augmentation:
+  enabled: true
+  rotation_range: 15
+  width_shift_range: 0.1
+  height_shift_range: 0.1
+  zoom_range: 0.1
+  horizontal_flip: true
+  brightness_range: [0.8, 1.2]
+  contrast_range: [0.8, 1.2]
+
+# Model Configuration
+model:
+  architecture: "resnet50" # Options: custom_cnn, resnet50, resnet101, densenet121, efficientnet_b0
+  pretrained: true
+  num_classes: 2
+  dropout_rate: 0.5
+  freeze_backbone: false
+  fine_tune_layers: 10
+
+# Training Configuration
+training:
+  epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: "adam" # Options: adam, sgd, rmsprop
+  scheduler: "cosine" # Options: cosine, step, plateau
+  early_stopping_patience: 10
+  save_best_only: true
+  class_weights: "balanced" # Options: balanced, manual, none
+
+# Loss Function
+loss:
+  type: "cross_entropy" # Options: cross_entropy, focal_loss, weighted_bce
+  focal_alpha: 0.25
+  focal_gamma: 2.0
+
+# Evaluation Metrics
+metrics:
+  primary: "auc_roc"
+  track_metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "auc_roc"
+    - "sensitivity"
+    - "specificity"
+
+# Medical Specific Configuration
+medical:
+  sensitivity_threshold: 0.96 # High sensitivity for medical diagnosis
+  specificity_threshold: 0.94
+  confidence_threshold: 0.8
+  uncertainty_estimation: true
+
+# Explainable AI Configuration
+explainability:
+  grad_cam_enabled: true
+  grad_cam_layer: "layer4" # For ResNet
+  lime_enabled: true
+  shap_enabled: true
+  attention_maps: true
+
+# Paths
+paths:
+  models_dir: "models/saved_models"
+  logs_dir: "logs"
+  results_dir: "results"
+  visualizations_dir: "results/visualizations"
+
+# Logging
+logging:
+  level: "INFO"
+  log_file: "logs/training.log"
+  tensorboard: true
+  wandb: false
+  mlflow: false
+
+# Deployment
+deployment:
+  model_format: "pytorch" # Options: pytorch, onnx, tensorrt
+  optimization: true
+  quantization: false
+  batch_inference: true
+
+# Hardware Configuration
+hardware:
+  device: "auto" # Options: auto, cpu, cuda, mps
+  mixed_precision: true
+  num_gpus: 1
+
+# Reproducibility
+reproducibility:
+  seed: 42
+  deterministic: true
+  benchmark: false
