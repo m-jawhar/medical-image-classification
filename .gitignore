@@ -147,20 +147,30 @@ mlruns/
 # Data directories
 data/raw/*
 data/processed/*
-data/splits/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
-!data/splits/.gitkeep
+
+# Keep CSV splits but ignore images
+data/splits/*.jpg
+data/splits/*.jpeg
+data/splits/*.png
 
 # Model directories
 models/saved_models/*
 models/pretrained/*
+models/architectures/*.pth
 !models/saved_models/.gitkeep
 !models/pretrained/.gitkeep
 
-# Results and outputs
-results/*
-!results/.gitkeep
+# Results and outputs (keep evaluation results, ignore others)
+results/predictions/*
+results/explanations/*
+!results/predictions/.gitkeep
+!results/explanations/.gitkeep
+
+# Chat logs and temporary files
+chat.txt
+chat_*.txt
 
 # Temporary files
 *.tmp
