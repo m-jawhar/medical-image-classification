@@ -71,7 +71,9 @@ class MedicalEvaluator:
 
     def load_model(self, model_path: str) -> nn.Module:
         """Load trained model from checkpoint."""
-        checkpoint = torch.load(model_path, map_location=self.device)
+        checkpoint = torch.load(
+            model_path, map_location=self.device, weights_only=False
+        )
 
         # Get model configuration from checkpoint
         model_config = checkpoint.get("config", self.config)
@@ -468,9 +470,22 @@ class MedicalEvaluator:
         self.create_clinical_report(metrics, viz_dir / "clinical_report.md")
 
         # Save detailed results
+        # Convert numpy types to native Python types for JSON serialization
+        def convert_to_native(obj):
+            if isinstance(obj, dict):
+                return {k: convert_to_native(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_to_native(v) for v in obj]
+            elif hasattr(obj, "item"):  # numpy scalar
+                return obj.item()
+            elif hasattr(obj, "tolist"):  # numpy array
+                return obj.tolist()
+            else:
+                return obj
+
         detailed_results = {
-            "metrics": metrics,
-            "optimal_threshold": optimal_threshold,
+            "metrics": convert_to_native(metrics),
+            "optimal_threshold": float(optimal_threshold),
             "predictions": {
                 "y_true": y_true.tolist(),
                 "y_pred": y_pred.tolist(),
