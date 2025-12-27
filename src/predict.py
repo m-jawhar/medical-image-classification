@@ -65,7 +65,9 @@ class MedicalImagePredictor:
 
     def _load_model(self, model_path: str) -> nn.Module:
         """Load trained model from checkpoint."""
-        checkpoint = torch.load(model_path, map_location=self.device)
+        checkpoint = torch.load(
+            model_path, map_location=self.device, weights_only=False
+        )
 
         # Get model configuration
         model_config = checkpoint.get("config", self.config)

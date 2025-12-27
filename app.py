@@ -92,10 +92,8 @@ def main():
 
     # Sidebar
     with st.sidebar:
-        st.image(
-            "https://via.placeholder.com/300x100/1f77b4/ffffff?text=Medical+AI",
-            use_column_width=True,
-        )
+        st.markdown("# 🏥 Medical AI")
+        st.markdown("---")
 
         st.markdown("### About")
         st.markdown(
@@ -159,8 +157,19 @@ def main():
 
     if use_example:
         st.info("Using example image for demonstration")
-        # You would load an example image here
-        uploaded_file = None  # Replace with actual example image
+        # Load example from test dataset
+        example_paths = list(Path("data/raw/chest_xray/test/PNEUMONIA").glob("*.jpeg"))
+        if example_paths:
+            from io import BytesIO
+
+            example_img = Image.open(example_paths[0])
+            buf = BytesIO()
+            example_img.save(buf, format="JPEG")
+            buf.seek(0)
+            uploaded_file = buf
+        else:
+            st.warning("No example images found. Please upload your own image.")
+            uploaded_file = None
 
     if uploaded_file is not None:
         # Display original image
@@ -169,7 +178,7 @@ def main():
         st.markdown("## 🖼️ Original Image")
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            st.image(image, caption="Uploaded Chest X-Ray", use_column_width=True)
+            st.image(image, caption="Uploaded Chest X-Ray", use_container_width=True)
 
         # Analyze button
         if st.button("🔬 Analyze Image", type="primary", use_container_width=True):
@@ -312,21 +321,21 @@ def main():
                                 st.image(
                                     original_np,
                                     caption="Original Image",
-                                    use_column_width=True,
+                                    use_container_width=True,
                                 )
 
                             with col2:
                                 st.image(
                                     heatmap,
                                     caption="Attention Heatmap",
-                                    use_column_width=True,
+                                    use_container_width=True,
                                 )
 
                             with col3:
                                 st.image(
                                     overlayed,
                                     caption="Overlayed Visualization",
-                                    use_column_width=True,
+                                    use_container_width=True,
                                 )
 
                     # Download report button
@@ -374,29 +383,26 @@ decisions.
 
     else:
         # Instructions when no image is uploaded
+        st.info("📖 **How to Use**")
         st.markdown(
             """
-        <div class="info-box">
-            <h3>📖 How to Use</h3>
-            <ol>
-                <li>Upload a chest X-ray image using the file uploader above</li>
-                <li>Click the "Analyze Image" button</li>
-                <li>Review the AI's diagnosis and confidence score</li>
-                <li>Examine the attention heatmap to understand the AI's decision</li>
-                <li>Read the clinical recommendations</li>
-                <li>Download the analysis report if needed</li>
-            </ol>
+        1. Upload a chest X-ray image using the file uploader above
+        2. Click the "Analyze Image" button
+        3. Review the AI's diagnosis and confidence score
+        4. Examine the attention heatmap to understand the AI's decision
+        5. Read the clinical recommendations
+        6. Download the analysis report if needed
+        """
+        )
 
-            <h3>✨ Features</h3>
-            <ul>
-                <li><strong>Accurate Detection:</strong> >95% accuracy on test data</li>
-                <li><strong>Explainable AI:</strong> Visual explanations of predictions</li>
-                <li><strong>Clinical Integration:</strong> Actionable recommendations</li>
-                <li><strong>Fast Analysis:</strong> Results in seconds</li>
-            </ul>
-        </div>
-        """,
-            unsafe_allow_html=True,
+        st.success("✨ **Features**")
+        st.markdown(
+            """
+        - **Accurate Detection:** >95% accuracy on test data
+        - **Explainable AI:** Visual explanations of predictions
+        - **Clinical Integration:** Actionable recommendations
+        - **Fast Analysis:** Results in seconds
+        """
         )
 
     # Footer
